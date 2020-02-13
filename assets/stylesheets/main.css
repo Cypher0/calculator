@@ -21,9 +21,23 @@ body {
   border-radius: 5px;
 }
 
-#calc-display {
+#calc-display, #calc-display-mini {
   grid-column: 1 / span 4;
+  font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+  font-weight: normal;
+  font-stretch: condensed;
+  text-align: right;
+  color: #000;
   background-color: #f2f2f2;
+}
+
+#calc-display-mini {
+  min-height: 40px;
+  font-size: 1em;
+}
+
+#calc-display {
+  font-size: 2.1em;
   border: 5px solid #666;
 }
 
