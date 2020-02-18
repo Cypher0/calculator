@@ -1,72 +1,90 @@
 const numKeys = document.querySelectorAll('.btn-numpad');
 const operatorKeys = document.querySelectorAll('.btn-operator');
 const equalsKey = document.querySelector('.btn-operate');
+const clearKey = document.querySelector('.btn-clear')
 
-const display = document.querySelector('#calc-display');
-const miniDisplay = document.querySelector('#calc-display-mini');
+const displayContainer = document.querySelector('#calc-display');
+const miniDisplayContainer = document.querySelector('#calc-display-mini');
 
-let displayContent = document.createElement('p');
-let miniDisplayContent = document.createElement('p');
+let display = document.createElement('p');
+let miniDisplay = document.createElement('p');
 
 let firstOperand;
 let secondOperand;
 let selectedOperator;
 
-let chained = false; // for stringing multiple operations
+let chained = false;
 
 numKeys.forEach((key) => {
   key.addEventListener('click', () => {
-    // populate display when clicking numpad numbers
     if (!chained) { 
-      displayContent.textContent += key.textContent;
-      display.appendChild(displayContent);
-    // when chaining, clear previous result from display before populating
+      if (display.textContent.length < 10) {
+        if (display.textContent == '0') {
+          setDisplay(key.textContent);
+        } else {
+          addToDisplay(key.textContent);         
+        }
+      }
     } else {
       chained = false;
-      displayContent.textContent = key.textContent;
+      setDisplay(key.textContent);
     }
   })
 })
 
 operatorKeys.forEach((key) => {
   key.addEventListener('click', () => {
-    // logic if it's the first operation
     if (!selectedOperator) {
-      firstOperand = displayContent.textContent;
+      firstOperand = display.textContent;
       selectedOperator = key.textContent;
-      miniDisplayContent.textContent = `${firstOperand} ${selectedOperator}`;
-      miniDisplay.appendChild(miniDisplayContent);
-      displayContent.textContent = ''; // clear display for accepting second operand
-    // logic for chaining multiple operations
+      setMiniDisplay(`${firstOperand} ${selectedOperator}`);
+      setDisplay('');
     } else {
       chained = true;
-      secondOperand = displayContent.textContent;
-      // calculate intermediate result
-      let result = operate(selectedOperator, firstOperand, secondOperand);
-      firstOperand = result; // and use it as first operand for next operation
+      secondOperand = display.textContent;
+      firstOperand = operate(selectedOperator, firstOperand, secondOperand);
       selectedOperator = key.textContent;
-      miniDisplayContent.textContent += ` ${secondOperand} ${selectedOperator}`;
-      displayContent.textContent = firstOperand; // display result of previous operation
-      secondOperand = ''; // clear display for accepting second operand
+      addToMiniDisplay(` ${secondOperand} ${selectedOperator}`);
+      setDisplay(firstOperand.toString());
+      secondOperand = '';
     }
   })
 })
 
 equalsKey.addEventListener('click', () => {
-  secondOperand = displayContent.textContent;
+  secondOperand = display.textContent;
   if (firstOperand && selectedOperator) {
-    // when second operand is not defined, operate firstOperand twice
     if (!secondOperand) {
       secondOperand = firstOperand;
     }
+    addToMiniDisplay(` ${secondOperand}`)
     let result = operate(selectedOperator, firstOperand, secondOperand);
-    miniDisplayContent.textContent += ` ${secondOperand}`;
-    displayContent.textContent = result;
-    firstOperand = result; // prepare the vars for possible future use
+    setDisplay(result.toString());
+    firstOperand = result;
     secondOperand = '';
     selectedOperator = '';
   }
 })
+
+clearKey.addEventListener('click', () => {
+  clear();
+})
+
+function setDisplay(content) {
+  display.textContent = content.slice(0, 10);
+}
+
+function addToDisplay(content) {
+  display.textContent = (display.textContent + content).slice(0, 10);
+}
+
+function setMiniDisplay(content) {
+  miniDisplay.textContent = content.slice(-22, 22);
+}
+
+function addToMiniDisplay(content) {
+  miniDisplay.textContent = (miniDisplay.textContent + content).slice(-22, 22);
+}
 
 function add(num1, num2) {
   return Number(num1) + Number(num2);
@@ -98,4 +116,15 @@ function operate(operator, num1, num2) {
     case '/':
       return divide(num1, num2);
   }
+}
+
+function clear() {
+  firstOperand = '';
+  secondOperand = '';
+  selectedOperator = '';
+  chained = false;
+  setDisplay('0');
+  setMiniDisplay('');
+  displayContainer.appendChild(display);
+  miniDisplayContainer.appendChild(miniDisplay);
 }
