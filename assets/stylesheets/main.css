@@ -10,6 +10,7 @@ body {
   max-width: 375px;
   display: grid;
   grid-template-columns: repeat(4, 1fr);
+  grid-template-rows: 50px auto;
   grid-gap: 10px;
 }
 
@@ -23,8 +24,8 @@ body {
 
 #calc-display, #calc-display-mini {
   grid-column: 1 / span 4;
-  font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
-  font-weight: normal;
+  font-family: monospace;
+  font-weight: bold;
   font-stretch: condensed;
   text-align: right;
   color: #000;
@@ -32,12 +33,11 @@ body {
 }
 
 #calc-display-mini {
-  min-height: 40px;
   font-size: 1em;
 }
 
 #calc-display {
-  font-size: 1.9em;
+  font-size: 2.2em;
   border: 5px solid #666;
 }
 
@@ -53,7 +53,7 @@ body {
   cursor: default;
 }
 
-.btn-numpad {
+.btn-numpad, .btn-comma {
   background-color: #000;
 }
 
